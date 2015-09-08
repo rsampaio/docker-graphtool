@@ -3,6 +3,7 @@ package main
 import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/docopt/docopt-go"
+	"strings"
 )
 
 func main() {
@@ -11,7 +12,6 @@ func main() {
 Usage:
   docker-dist mount [--options=<mount_options>] [<image>] [<dest>]
   docker-dist umount [--force] <image>
-  docker-dist pull <image>
   docker-dist rm <image>
 
 Options:
@@ -30,15 +30,23 @@ Options:
 		//   - pull if not
 		// - create dest
 		// - mount
+		image := arguments["<image>"].(string)
+		dest := arguments["<dest>"].(string)
+		options := []string{""}
+		if arguments["--options"] != nil {
+			options = strings.Split(arguments["--options"].(string), ",")
+		}
+
 		log.WithFields(log.Fields{
-			"options": arguments["--options"],
-			"image":   arguments["<image>"],
-			"dest":    arguments["<dest>"],
+			"options": options,
+			"image":   image,
+			"dest":    dest,
 		}).Info("Mount")
+
+		graphTool := NewGraphTool("/var/lib/docker")
+		graphTool.Mount(image, dest, options)
 	} else if arguments["umount"].(bool) {
 		log.Info("Unmount")
-	} else if arguments["pull"].(bool) {
-		log.Info("Pull")
 	} else if arguments["rm"].(bool) {
 		log.Info("Rm")
 	}

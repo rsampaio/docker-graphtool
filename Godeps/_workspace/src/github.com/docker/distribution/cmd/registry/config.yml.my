@@ -1,0 +1,31 @@
+version: 0.1
+log:
+  level: debug
+  fields:
+    service: registry
+    environment: development
+storage:
+    cache:
+        layerinfo: inmemory
+    filesystem:
+        rootdirectory: /var/lib/registry
+    maintenance:
+        uploadpurging:
+            enabled: false
+http:
+    addr: :5000
+    secret: 4ac03a0f8c5fd84394ae057e4b57a81911dff27d
+    debug:
+        addr: localhost:5001
+notifications:
+    endpoints:
+        - name: reglistener
+          url: http://reglistener.rsampaio.info/registry-event
+          headers:
+             Authorization: 
+               - cmVnbGlzdGVuZXI6bGVyMGxlcjA=
+          timeout: 1s
+          threshold: 10
+          backoff: 1s
+          disabled: false
+

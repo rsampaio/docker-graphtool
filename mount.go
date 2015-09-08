@@ -17,16 +17,31 @@ func NewGraphTool(dockerRoot string) *GraphTool {
 }
 
 // (g *GraphTool) Mount ...
-func (g *GraphTool) Mount(image string, dest string, options []string) {
+func (g *GraphTool) Mount(imageName string, dest string, options []string) {
 	driver, err := graphdriver.New(g.DockerRoot, make([]string, 0))
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	graphHandler, err := graph.NewGraph(g.DockerRoot, driver)
+	graphHandler, err := graph.NewGraph(g.DockerRoot+"/graph", driver)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	log.Info(graphHandler)
+	tagCfg := &graph.TagStoreConfig{
+		Graph: graphHandler,
+	}
+
+	tagStore, err := graph.NewTagStore(g.DockerRoot+"/repositories-"+driver.String(), tagCfg)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	image, err := tagStore.LookupImage(imageName)
+	if image == nil {
+		log.Fatal(err.Error())
+	}
+
+	path, _ := driver.Get(image.ID, "")
+	log.Infof("%+v\n", path)
 }

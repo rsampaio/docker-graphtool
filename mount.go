@@ -3,8 +3,10 @@ package main
 import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/docker/docker/daemon/graphdriver"
+	_ "github.com/docker/docker/daemon/graphdriver/aufs"
 	_ "github.com/docker/docker/daemon/graphdriver/overlay"
 	"github.com/docker/docker/graph"
+	"syscall"
 )
 
 type GraphTool struct {
@@ -42,6 +44,12 @@ func (g *GraphTool) Mount(imageName string, dest string, options []string) {
 		log.Fatal(err.Error())
 	}
 
-	path, _ := driver.Get(image.ID, "")
-	log.Infof("%+v\n", path)
+	path, _ := driver.Get(image.ID, "graphtool")
+	log.Infof("%+v", path)
+
+	if err = syscall.Mount(path, dest, "none",
+		syscall.MS_BIND|syscall.MS_NOATIME|syscall.MS_NOSUID, ""); err != nil {
+		log.Fatal(err.Error())
+	}
+
 }

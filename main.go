@@ -12,7 +12,6 @@ func main() {
 Usage:
   docker-dist mount [--options=<mount_options>] [<image>] [<dest>]
   docker-dist umount [--force] <image>
-  docker-dist rm <image>
 
 Options:
   -h --help                        This help
@@ -47,7 +46,5 @@ Options:
 		graphTool.Mount(image, dest, options)
 	} else if arguments["umount"].(bool) {
 		log.Info("Unmount")
-	} else if arguments["rm"].(bool) {
-		log.Info("Rm")
 	}
 }

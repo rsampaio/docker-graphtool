@@ -1,2 +1,2 @@
 binary:
-	godep go build -tags daemon -o dgt .
+	godep go build -tags daemon -o dg .

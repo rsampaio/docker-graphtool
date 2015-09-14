@@ -1,17 +1,18 @@
 package main
 
 import (
+	"fmt"
 	log "github.com/Sirupsen/logrus"
 	"github.com/docopt/docopt-go"
 	"strings"
 )
 
 func main() {
-	usage := `Docker Dist.
+	usage := `Docker graphtool.
 
 Usage:
-  docker-dist mount [--options=<mount_options>] [<image>] [<dest>]
-  docker-dist umount [--force] <image>
+  dg mount [--options=<mount_options>] [<image>] [<dest>]
+  dg umount [--force] <temp_image>
 
 Options:
   -h --help                        This help
@@ -23,12 +24,9 @@ Options:
 		log.Fatal(err.Error())
 	}
 
+	graphTool := NewGraphTool("/var/lib/docker")
+
 	if arguments["mount"].(bool) {
-		// Mount docker image
-		// - check if cached
-		//   - pull if not
-		// - create dest
-		// - mount
 		image := arguments["<image>"].(string)
 		dest := arguments["<dest>"].(string)
 		options := []string{""}
@@ -42,9 +40,14 @@ Options:
 			"dest":    dest,
 		}).Info("Mount")
 
-		graphTool := NewGraphTool("/var/lib/docker")
-		graphTool.Mount(image, dest, options)
+		tempImage, err := graphTool.Mount(image, dest, options)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+
+		fmt.Printf("%s\n", tempImage)
 	} else if arguments["umount"].(bool) {
 		log.Info("Unmount")
+		graphTool.Unmount(arguments["<temp_image>"].(string))
 	}
 }

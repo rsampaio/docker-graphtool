@@ -9,8 +9,8 @@ Requires:
  - docker
 
 ```
-go get -u -d github.com/rsampaio/docker-graphtool
-cd $GOPATH/go/src/github.com/rsampaio/docker-graphtool
+go get -d github.com/rsampaio/docker-graphtool
+cd $GOPATH/src/github.com/rsampaio/docker-graphtool
 make
 ```
 

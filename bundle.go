@@ -119,6 +119,7 @@ func (g *GraphTool) tarCp(srcName string, tw *tar.Writer) (int64, error) {
 }
 
 func (g *GraphTool) specFiles(tw *tar.Writer) error {
+	// shameless copy from https://github.com/opencontainers/runc/blob/master/spec.go
 	spec := specs.LinuxSpec{
 		Spec: specs.Spec{
 			Version: specs.Version,
@@ -347,7 +348,5 @@ func (g *GraphTool) specFiles(tw *tar.Writer) error {
 		return err
 	}
 
-	g.logger.Infof("specs=%s", string(specData))
-	g.logger.Infof("rspecs=%s", string(rspecData))
 	return nil
 }
